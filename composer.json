@@ -23,9 +23,9 @@
     "issues": "https://github.com/heimrichhannot/contao-components/issues"
   },
   "require": {
-    "php": ">=5.4.0, <7",
-    "contao/core": ">=3.2,<4-dev",
-    "contao-community-alliance/composer-installer": "*"
+    "php": "~5.4 || ~7.0",
+    "contao/core-bundle": "^3.5.1 || ~4.1",
+    "contao-community-alliance/composer-plugin": "~2.4 || ~3.0"
   },
   "autoload": {
     "classmap": [
