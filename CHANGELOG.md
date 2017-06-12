@@ -1,5 +1,11 @@
-# Change Log
+# Changelog
 All notable changes to this project will be documented in this file.
+
+## [1.0.3] - 2017-06-12
+
+### Added
+
+- Components::getActive()
 
 ## [1.0.2] - 2017-04-05
 

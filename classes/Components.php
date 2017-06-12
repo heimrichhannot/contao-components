@@ -97,12 +97,19 @@ class Components extends \Frontend
     /**
      * Get active components for a given frontend layout
      *
-     * @param \LayoutModel $objLayout
+     * @param \LayoutModel $objLayout|null If null, the current Layout is used
      *
      * @return array
      */
-    public static function getActiveComponents(\LayoutModel $objLayout)
+    public static function getActiveComponents(\LayoutModel $objLayout = null)
     {
+        global $objPage;
+
+        if ($objLayout === null && ($objLayout = \LayoutModel::findByPk($objPage->layout)) === null)
+        {
+            return [];
+        }
+
         $arrAvailable = static::getComponents();
 
         if ($objLayout->disableComponents)
@@ -113,6 +120,11 @@ class Components extends \Frontend
         }
 
         return $arrAvailable;
+    }
+
+    public static function isActive($strComponent)
+    {
+        return in_array($strComponent, array_keys(static::getActiveComponents()));
     }
 
 
