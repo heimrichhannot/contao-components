@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2017-08-15
+
+### Changed
+
+- unset asset if already added to $GLOBALS before, and add again within component context 
+
 ## [1.0.3] - 2017-06-12
 
 ### Added

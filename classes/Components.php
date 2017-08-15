@@ -22,7 +22,7 @@ class Components extends \Frontend
      *
      * @return array
      */
-    public static function addAssets($strGroup, $arrNew = array(), $arrCurrent = array())
+    public static function addAssets($strGroup, $arrNew = [], $arrCurrent = [])
     {
         if (!isset($arrNew['files']))
         {
@@ -34,22 +34,22 @@ class Components extends \Frontend
 
         if (!is_array($arrFiles))
         {
-            $arrFiles = array($arrFiles);
+            $arrFiles = [$arrFiles];
         }
 
         if (!is_array($arrCurrent))
         {
-            $arrCurrent = array($arrCurrent);
+            $arrCurrent = [$arrCurrent];
         }
 
-        $arrReplace = array();
+        $arrReplace = [];
 
         foreach ($arrFiles as $key => $strFile)
         {
-            // do not add the same file multiple times
-            if (in_array($strFile, $arrCurrent))
+            // do not add the same file multiple times, but maintain order within component group
+            if (($idx = array_search($strFile, $arrCurrent)) !== false)
             {
-                continue;
+                unset($arrCurrent[$idx]);
             }
 
             $arrReplace[$strGroup . '.' . $key] = $strFile;
@@ -81,8 +81,8 @@ class Components extends \Frontend
             return false;
         }
 
-        $arrJs  = is_array($GLOBALS['TL_JAVASCRIPT']) ? $GLOBALS['TL_JAVASCRIPT'] : array();
-        $arrCss = is_array($GLOBALS['TL_USER_CSS']) ? $GLOBALS['TL_USER_CSS'] : array();
+        $arrJs  = is_array($GLOBALS['TL_JAVASCRIPT']) ? $GLOBALS['TL_JAVASCRIPT'] : [];
+        $arrCss = is_array($GLOBALS['TL_USER_CSS']) ? $GLOBALS['TL_USER_CSS'] : [];
 
         foreach ($arrComponents as $group => $arrComponent)
         {
@@ -97,7 +97,7 @@ class Components extends \Frontend
     /**
      * Get active components for a given frontend layout
      *
-     * @param \LayoutModel $objLayout|null If null, the current Layout is used
+     * @param \LayoutModel $objLayout |null If null, the current Layout is used
      *
      * @return array
      */
@@ -130,13 +130,14 @@ class Components extends \Frontend
 
     /**
      * Get components as array
+     *
      * @param $blnGroup
      *
      * @return array All available assets
      */
     public static function getComponents($blnGroup = false)
     {
-        $arrOptions = array();
+        $arrOptions = [];
 
         $arrComponents = $GLOBALS['TL_COMPONENTS'];
 
