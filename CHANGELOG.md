@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2017-09-12
+
+### Changed
+
+- added `before` and `after` to define files invocation (`sort` should not be used any longer)
+
 ## [1.0.4] - 2017-08-15
 
 ### Changed

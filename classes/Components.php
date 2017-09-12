@@ -11,6 +11,8 @@
 namespace HeimrichHannot\Components;
 
 
+use HeimrichHannot\Haste\Util\Arrays;
+
 class Components extends \Frontend
 {
     /**
@@ -24,41 +26,47 @@ class Components extends \Frontend
      */
     public static function addAssets($strGroup, $arrNew = [], $arrCurrent = [])
     {
-        if (!isset($arrNew['files']))
-        {
+        if (!isset($arrNew['files'])) {
             return $arrCurrent;
         }
 
-        $arrFiles = $arrNew['files'];
-        $intIndex = $arrNew['sort'];
+        $arrFiles     = $arrNew['files'];
+        $intSort      = $arrNew['sort'];
+        $insertAfter  = $arrNew['after'];
+        $insertBefore = $arrNew['before'];
 
-        if (!is_array($arrFiles))
-        {
+        if (!is_array($arrFiles)) {
             $arrFiles = [$arrFiles];
         }
 
-        if (!is_array($arrCurrent))
-        {
+        if (!is_array($arrCurrent)) {
             $arrCurrent = [$arrCurrent];
         }
 
         $arrReplace = [];
 
-        foreach ($arrFiles as $key => $strFile)
-        {
+        foreach ($arrFiles as $key => $strFile) {
             // do not add the same file multiple times, but maintain order within component group
-            if (($idx = array_search($strFile, $arrCurrent)) !== false)
-            {
+            if (($idx = array_search($strFile, $arrCurrent)) !== false) {
                 unset($arrCurrent[$idx]);
             }
 
             $arrReplace[$strGroup . '.' . $key] = $strFile;
         }
 
-        if ($intIndex !== null)
-        {
-            array_insert($arrCurrent, $intIndex, $arrReplace);
+        if ($insertAfter !== null) {
+            Arrays::insertInArrayByName($arrCurrent, $insertAfter, $arrReplace, 1, !is_numeric($intSort));
+            return $arrCurrent;
+        }
 
+        if ($insertBefore !== null) {
+            Arrays::insertInArrayByName($arrCurrent, $insertBefore, $arrReplace, 0, !is_numeric($intSort));
+            return $arrCurrent;
+        }
+
+        // legacy, use after and before
+        if ($intSort !== null) {
+            Arrays::insertInArrayByName($arrCurrent, $intSort, $arrReplace, 0, !is_numeric($intSort));
             return $arrCurrent;
         }
 
@@ -76,16 +84,14 @@ class Components extends \Frontend
     {
         $arrComponents = static::getActiveComponents($objLayout);
 
-        if (!is_array($arrComponents))
-        {
+        if (!is_array($arrComponents)) {
             return false;
         }
 
         $arrJs  = is_array($GLOBALS['TL_JAVASCRIPT']) ? $GLOBALS['TL_JAVASCRIPT'] : [];
         $arrCss = is_array($GLOBALS['TL_USER_CSS']) ? $GLOBALS['TL_USER_CSS'] : [];
 
-        foreach ($arrComponents as $group => $arrComponent)
-        {
+        foreach ($arrComponents as $group => $arrComponent) {
             $arrJs  = static::addAssets($group, $arrComponent['js'], $arrJs);
             $arrCss = static::addAssets($group, $arrComponent['css'], $arrCss);
         }
@@ -105,15 +111,13 @@ class Components extends \Frontend
     {
         global $objPage;
 
-        if ($objLayout === null && ($objLayout = \LayoutModel::findByPk($objPage->layout)) === null)
-        {
+        if ($objLayout === null && ($objLayout = \LayoutModel::findByPk($objPage->layout)) === null) {
             return [];
         }
 
         $arrAvailable = static::getComponents();
 
-        if ($objLayout->disableComponents)
-        {
+        if ($objLayout->disableComponents) {
             $arrInactive = deserialize($objLayout->inactiveComponents, true);
 
             $arrAvailable = array_diff_key($arrAvailable, array_flip($arrInactive));
@@ -141,17 +145,14 @@ class Components extends \Frontend
 
         $arrComponents = $GLOBALS['TL_COMPONENTS'];
 
-        if (!is_array($arrComponents))
-        {
+        if (!is_array($arrComponents)) {
             return $arrOptions;
         }
 
-        foreach ($arrComponents as $groupKey => $arrGroup)
-        {
+        foreach ($arrComponents as $groupKey => $arrGroup) {
             $varValue = $arrGroup;
 
-            if ($blnGroup)
-            {
+            if ($blnGroup) {
                 $varValue = $groupKey;
             }
 

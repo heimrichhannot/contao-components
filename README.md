@@ -48,7 +48,8 @@ $GLOBALS['TL_COMPONENTS'] = array
      			(
      				'system/modules/bootstrapper/assets/vendor/modernizr.min.js|static',
      			),
-     			'sort'  => 0, // invoke always before all other javascript
+     			'before'  => 0, // invoke always before jquery of the given key
+     			//'after'  => 'bs.core', // invoke always after bs.core
      		),
      	),
 );
