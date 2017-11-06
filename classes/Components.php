@@ -11,12 +11,12 @@
 namespace HeimrichHannot\Components;
 
 
-use HeimrichHannot\Haste\Util\Arrays;
-
 class Components extends \Frontend
 {
+
+
     /**
-     * Add assets from a component group
+     * remove assets from js group
      *
      * @param       $strGroup
      * @param array $arrNew
@@ -24,76 +24,44 @@ class Components extends \Frontend
      *
      * @return array
      */
-    public static function addAssets($strGroup, $arrNew = [], $arrCurrent = [])
+    public static function removeAssets($arrRem = [], $arrCurrent = [])
     {
-        if (!isset($arrNew['files'])) {
+        if (!is_array($arrRem)) {
             return $arrCurrent;
         }
 
-        $arrFiles     = $arrNew['files'];
-        $intSort      = $arrNew['sort'];
-        $insertAfter  = $arrNew['after'];
-        $insertBefore = $arrNew['before'];
-
-        if (!is_array($arrFiles)) {
-            $arrFiles = [$arrFiles];
-        }
-
-        if (!is_array($arrCurrent)) {
-            $arrCurrent = [$arrCurrent];
-        }
-
-        $arrReplace = [];
-
-        foreach ($arrFiles as $key => $strFile) {
-            // do not add the same file multiple times, but maintain order within component group
-            if (($idx = array_search($strFile, $arrCurrent)) !== false) {
-                unset($arrCurrent[$idx]);
+        foreach ($arrRem as $value) {
+            foreach ($arrCurrent as $key => $current) {
+                if (ltrim($current, '/') == $value) {
+                    unset($arrCurrent[$key]);
+                }
             }
-
-            $arrReplace[$strGroup . '.' . $key] = $strFile;
         }
 
-        if ($insertAfter !== null) {
-            Arrays::insertInArrayByName($arrCurrent, $insertAfter, $arrReplace, 1, !is_numeric($intSort));
-            return $arrCurrent;
-        }
-
-        if ($insertBefore !== null) {
-            Arrays::insertInArrayByName($arrCurrent, $insertBefore, $arrReplace, 0, !is_numeric($intSort));
-            return $arrCurrent;
-        }
-
-        // legacy, use after and before
-        if ($intSort !== null) {
-            Arrays::insertInArrayByName($arrCurrent, $intSort, $arrReplace, 0, !is_numeric($intSort));
-            return $arrCurrent;
-        }
-
-        return $arrCurrent + $arrReplace;
+        return $arrCurrent;
     }
 
     /**
-     * Register all active components
+     * remove all disabled components
      *
      * @param \LayoutModel $objLayout
      *
      * @return bool
      */
-    public static function registerComponents(\LayoutModel $objLayout)
+    public static function disable(\LayoutModel $objLayout)
     {
-        $arrComponents = static::getActiveComponents($objLayout);
+        $disabled = static::getDisabledComponents($objLayout);
 
-        if (!is_array($arrComponents)) {
+        if (!is_array($disabled)) {
             return false;
         }
 
         $arrJs  = is_array($GLOBALS['TL_JAVASCRIPT']) ? $GLOBALS['TL_JAVASCRIPT'] : [];
         $arrCss = is_array($GLOBALS['TL_USER_CSS']) ? $GLOBALS['TL_USER_CSS'] : [];
 
-        foreach ($arrComponents as $group => $arrComponent) {
-            $arrJs  = static::addAssets($group, $arrComponent['js'], $arrJs);
-            $arrCss = static::addAssets($group, $arrComponent['css'], $arrCss);
+        foreach ($disabled as $arrComponent) {
+            $arrJs  = static::removeAssets($arrComponent['js'], $arrJs);
+            $arrCss = static::removeAssets($arrComponent['css'], $arrCss);
         }
 
         $GLOBALS['TL_JAVASCRIPT'] = $arrJs;
@@ -101,13 +69,13 @@ class Components extends \Frontend
     }
 
     /**
-     * Get active components for a given frontend layout
+     * Get disabled components for a given frontend layout
      *
      * @param \LayoutModel $objLayout |null If null, the current Layout is used
      *
      * @return array
      */
-    public static function getActiveComponents(\LayoutModel $objLayout = null)
+    public static function getDisabledComponents(\LayoutModel $objLayout = null)
     {
         global $objPage;
 
@@ -115,15 +83,15 @@ class Components extends \Frontend
             return [];
         }
 
-        $arrAvailable = static::getComponents();
+        $disabled = [];
+        $all      = static::getComponents();
 
         if ($objLayout->disableComponents) {
-            $arrInactive = deserialize($objLayout->inactiveComponents, true);
-
-            $arrAvailable = array_diff_key($arrAvailable, array_flip($arrInactive));
+            $disabled = deserialize($objLayout->inactiveComponents, true);
+            $disabled = array_intersect_key($all, array_flip($disabled));
         }
 
-        return $arrAvailable;
+        return $disabled;
     }
 
     public static function isActive($strComponent)
@@ -137,7 +105,7 @@ class Components extends \Frontend
      *
      * @param $blnGroup
      *
-     * @return array All available assets
+     * @return array All assets
      */
     public static function getComponents($blnGroup = false)
     {
@@ -170,5 +138,27 @@ class Components extends \Frontend
     public static function getComponentGroups()
     {
         return static::getComponents(true);
+    }
+
+    /**
+     * Get active components for a given frontend layout
+     *
+     * @param \LayoutModel $objLayout |null If null, the current Layout is used
+     *
+     * @return array
+     */
+    public static function getActiveComponents(\LayoutModel $objLayout = null)
+    {
+        global $objPage;
+        if ($objLayout === null && ($objLayout = \LayoutModel::findByPk($objPage->layout)) === null) {
+            return [];
+        }
+        $arrAvailable = static::getComponents();
+        if ($objLayout->disableComponents) {
+            $arrInactive  = deserialize($objLayout->inactiveComponents, true);
+            $arrAvailable = array_diff_key($arrAvailable, array_flip($arrInactive));
+        }
+
+        return $arrAvailable;
     }
 }

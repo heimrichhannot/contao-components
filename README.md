@@ -5,7 +5,7 @@ If you register your javascript and css files as component, it is possible to di
 
 ## Technical instruction 
 
-To register custom js/css components, register them within '$GLOBALS['TL_COMPONENTS']'.
+To disable custom js/css components, register them within '$GLOBALS['TL_COMPONENTS']'.
 
 The following example is taken from [heimrichhannot/contao-bootstrapper](https://packagist.org/packages/heimrichhannot/contao-bootstrapper).
 

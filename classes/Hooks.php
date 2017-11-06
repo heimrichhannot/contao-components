@@ -36,7 +36,7 @@ class Hooks extends \Controller
             return $strBuffer;
         }
 
-        \HeimrichHannot\Components\Components::registerComponents($objLayout);
+        \HeimrichHannot\Components\Components::disable($objLayout);
 
         return $strBuffer;
     }

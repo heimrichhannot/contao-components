@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2017-11-06
+
+### Changed
+
+- load all js/css components and then disable them in BE
+
 ## [1.1.0] - 2017-09-12
 
 ### Changed
