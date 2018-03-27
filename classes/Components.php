@@ -33,7 +33,7 @@ class Components extends \Frontend
             $options = explode('|', $value);
             foreach ($arrCurrent as $key => $current) {
                 $parts = explode('|', $current);
-                if (ltrim($parts[0], '/') == ltrim('/', $options[0])) {
+                if (ltrim($parts[0], '/') == ltrim($options[0], '/')) {
                     unset($arrCurrent[$key]);
                     continue 2;
                 }
