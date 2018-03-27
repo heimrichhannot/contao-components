@@ -10,7 +10,6 @@
 
 namespace HeimrichHannot\Components;
 
-
 class Components extends \Frontend
 {
 
@@ -31,9 +30,12 @@ class Components extends \Frontend
         }
 
         foreach ($arrRem as $value) {
+            $options = explode('|', $value);
             foreach ($arrCurrent as $key => $current) {
-                if (ltrim($current, '/') == $value) {
+                $parts = explode('|', $current);
+                if (ltrim($parts[0], '/') == ltrim('/', $options[0])) {
                     unset($arrCurrent[$key]);
+                    continue 2;
                 }
             }
         }
@@ -56,16 +58,19 @@ class Components extends \Frontend
             return false;
         }
 
-        $arrJs  = is_array($GLOBALS['TL_JAVASCRIPT']) ? $GLOBALS['TL_JAVASCRIPT'] : [];
-        $arrCss = is_array($GLOBALS['TL_USER_CSS']) ? $GLOBALS['TL_USER_CSS'] : [];
+        $arrJs      = is_array($GLOBALS['TL_JAVASCRIPT']) ? $GLOBALS['TL_JAVASCRIPT'] : [];
+        $arrUserCss = is_array($GLOBALS['TL_USER_CSS']) ? $GLOBALS['TL_USER_CSS'] : [];
+        $arrCss     = is_array($GLOBALS['TL_CSS']) ? $GLOBALS['TL_CSS'] : [];
 
-        foreach ($disabled as $arrComponent) {
-            $arrJs  = static::removeAssets($arrComponent['js'], $arrJs);
-            $arrCss = static::removeAssets($arrComponent['css'], $arrCss);
+        foreach ($disabled as $key => $arrComponent) {
+            $arrJs      = static::removeAssets($arrComponent['js'], $arrJs);
+            $arrUserCss = static::removeAssets($arrComponent['css'], $arrUserCss);
+            $arrCss     = static::removeAssets($arrComponent['css'], $arrCss);
         }
 
         $GLOBALS['TL_JAVASCRIPT'] = $arrJs;
-        $GLOBALS['TL_USER_CSS']   = $arrCss;
+        $GLOBALS['TL_USER_CSS']   = $arrUserCss;
+        $GLOBALS['TL_CSS']        = $arrCss;
     }
 
     /**

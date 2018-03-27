@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2018-03-27
+
+### Fixed
+- disable css that is invoked in `$GLOBALS['TL_CSS']`
+- properly match paths when removing assets 
+
 ## [2.0.0] - 2017-11-06
 
 ### Changed
