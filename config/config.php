@@ -11,11 +11,8 @@
 /**
  * HOOKS
  */
-if (is_array($GLOBALS['TL_HOOKS']['replaceDynamicScriptTags']))
-{
-    array_insert($GLOBALS['TL_HOOKS']['replaceDynamicScriptTags'], 0, array(array('HeimrichHannot\Components\Hooks', 'replaceDynamicScriptTagsHook')));
-}
-else
-{
-    $GLOBALS['TL_HOOKS']['replaceDynamicScriptTags'][] = array('HeimrichHannot\Components\Hooks', 'replaceDynamicScriptTagsHook');
+if (is_array($GLOBALS['TL_HOOKS']['replaceDynamicScriptTags'])) {
+    array_insert($GLOBALS['TL_HOOKS']['replaceDynamicScriptTags'], count($GLOBALS['TL_HOOKS']['replaceDynamicScriptTags']) + 1, [['HeimrichHannot\Components\Hooks', 'replaceDynamicScriptTagsHook']]);
+} else {
+    $GLOBALS['TL_HOOKS']['replaceDynamicScriptTags'][] = ['HeimrichHannot\Components\Hooks', 'replaceDynamicScriptTagsHook'];
 }

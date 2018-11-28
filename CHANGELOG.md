@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2018-11-28
+
+### Changed
+- load after `heimrichhannot/contao-modal` in order to remove assets added by `replaceDynamicScriptTags` HOOK
+
 ## [2.0.2] - 2018-03-27
 
 ### Fixed
