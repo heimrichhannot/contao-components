@@ -63,9 +63,9 @@ class Components extends \Frontend
         $arrCss     = is_array($GLOBALS['TL_CSS']) ? $GLOBALS['TL_CSS'] : [];
 
         foreach ($disabled as $key => $arrComponent) {
-            $arrJs      = static::removeAssets($arrComponent['js'], $arrJs);
-            $arrUserCss = static::removeAssets($arrComponent['css'], $arrUserCss);
-            $arrCss     = static::removeAssets($arrComponent['css'], $arrCss);
+            $arrJs      = static::removeAssets($arrComponent['js'] ?? [], $arrJs);
+            $arrUserCss = static::removeAssets($arrComponent['css'] ?? [], $arrUserCss);
+            $arrCss     = static::removeAssets($arrComponent['css'] ?? [], $arrCss);
         }
 
         $GLOBALS['TL_JAVASCRIPT'] = $arrJs;
